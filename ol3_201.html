@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>OpenLayers 3 Examples</title>
+
+	<!-- jQuery 1.11.3 -->
+	<script type="text/javascript" src="./resources/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap-theme.min.css" type="text/css">
+	<script type="text/javascript" src="./resources/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- OpenLayers 3.14.2 -->
+	<link rel="stylesheet" href="./resources/ol3/v3.14.2/ol.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/v3.14.2/ol-debug.js"></script>
+	
+	<!-- Proj4js 2.3.6 -->
+	<script type="text/javascript" src="./resources/proj4js/2.3.6/proj4.js"></script>
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+					</button>
+					<a class="navbar-brand" href="#">OpenLayers 3</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<form class="navbar-form navbar-right" role="form" action="./index.html">
+						<button type="submit" class="btn btn-success">뒤로 돌아가기</button>
+					</form>
+				</div>
+			</div>
+		</div>
+        <div id="content" class="container">
+			<p>
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                ol3_201.html - Map
+            </p>
+			<hr/>
+			<div id="map"></div>
+		</div>
+	</div>
+	
+	<hr/>
+	
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted">OSGeo(Open Source GeoSpatial) Korean Chapter</p>
+		</div>
+	</footer>
+
+    
+    <script type="text/javascript">
+        var map = new ol.Map({
+            target : 'map',         // map의 컨테이너 html 문서내에 포함된 DIV Element의 id 입니다.
+            // layers : [],         // 정의 하지 않으면 no Layers 가 렌더링 됩니다.
+            layers : [
+                new ol.layer.Tile({
+                    source : new ol.source.OSM()    // OSM(Open Street Map)
+                })
+            ],
+            logo : 'true',              // 지도에 표시 되는 로고로써 표시 하지 않으려면 false.
+                                        // 객체를 넣어 링크와 이미지를 넣을 수 있습니다. 기본값은 OpenLayers 3 로고
+            overlays : [],              // 기본적으로 맵에 넣을 overlay를 설정합니다.
+            renderer : 'canvas',       // canvas, 'dom', 'webgl' 을 사용할 수 있습니다.
+            interactions : ol.interaction.defaults({    // 기본적으로 넣을 ol.interaction을 설정합니다.
+                shiftDragZoom : true,
+                mouseWheelZoom : false
+            }),
+            controls : [                // 기본적으로 넣을 ol.control을 설정합니다.
+                new ol.control.Zoom()
+            ],
+            view : new ol.View({        // map의 center, resilution, projection 등을 설정 합니다.
+                center : [0, 0],
+                zoom : 1
+            })
+        });
+    </script>
+
+</body>
+</html>

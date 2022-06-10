@@ -1,0 +1,160 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<title>OpenLayers 3 Examples</title>
+	
+	<!-- jQuery 1.11.3 -->
+	<script type="text/javascript" src="./resources/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap-theme.min.css" type="text/css">
+	<script type="text/javascript" src="./resources/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- OpenLayers 3.14.2 -->
+	<link rel="stylesheet" href="./resources/ol3/v3.14.2/ol.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/v3.14.2/ol-debug.js"></script>
+	
+	<!-- Proj4js 2.3.6 -->
+	<script type="text/javascript" src="./resources/proj4js/2.3.6/proj4.js"></script>
+	
+	<!-- Layer Switcher (walkermatt) -->
+	<link rel="stylesheet" href="./resources/ol3/walkermatt/ol3-layerswitcher.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/walkermatt/ol3-layerswitcher.js"></script>
+	
+	<link rel="stylesheet" href="./style.css" type="text/css">
+	<style type="text/css">
+		.map {
+			height: 250px;
+		}
+	</style>
+	
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+					</button>
+					<a class="navbar-brand" href="#">OpenLayers 3</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<form class="navbar-form navbar-right" role="form" action="./index.html">
+						<button type="submit" class="btn btn-success">뒤로 돌아가기</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="content" class="container">
+			<p><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> ol3_302.html - Tile Layer</p>
+			<hr/>
+			<div class="row">
+                <div class="col-md-6"><div id="mapOSM" class="map"></div><center> OSM MAP</center></div>
+                <div class="col-md-6"><div id="mapBing" class="map"></div><center> Bing Map </center></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><div id="vworldBaseMap" class="map"></div><center> VWorld MAP Base </center></div>
+                <div class="col-md-6"><div id="vworldSateMap" class="map"></div><center> VWorld MAP Satellite  </center></div>
+            </div>
+		</div>
+	</div>
+	
+	<hr/>
+	
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted">OSGeo(Open Source GeoSpatial) Korean Chapter</p>
+		</div>
+	</footer>
+	
+	<script>
+        var view = new ol.View({
+            center : ol.proj.transform([ 127, 37 ], 'EPSG:4326', 'EPSG:3857'),
+            zoom : 6
+        });
+
+        // var apiKey = "Your Api Key";
+        var bingMapApiKey = 'AkGbxXx6tDWf1swIhPJyoAVp06H0s0gDTYslNWWHZ6RoPqMpB9ld5FY1WutX8UoF';
+
+        // 사용 가능 imagerySet = 'Road' | 'Aerial' | 'AeriaWithLabels' | 'collinsBart' | 'ordnanceSurvey';
+        var bingMapImagerySet = 'AerialWithLabels';
+
+        // VWorld Map attribuions
+        var vworldMapAttr = 'Data by <a href="http://map.vworld.kr/">VWORLD MAP';
+
+        // VWorld Base MAP XYZ URL
+		var vworldMapBaseMAPUrl = 'http://xdworld.vworld.kr:8080/2d/Base/201310/{z}/{x}/{y}.png';
+
+        // VWorld SatLLITE MAP XYZ URL
+		var vworldMapSateMAPUrl = 'http://xdworld.vworld.kr:8080/2d/Satellite/201301/{z}/{x}/{y}.jpeg';
+
+
+        // Open Street Map (OSM Map)
+        var mapOSM = new ol.Map({
+            target : 'mapOSM',
+            renderer : 'canvas',
+            layers : [ 
+                new ol.layer.Tile({
+                    source : new ol.source.OSM()
+                })
+            ],
+            view : view
+        });
+
+        // Microsoft Map (Bing Map)
+        var cycleOSM = new ol.Map({
+            target : 'mapBing',
+            renderer : 'canvas',
+            layers : [
+                new ol.layer.Tile({
+                    source : new ol.source.BingMaps({
+                        key : bingMapApiKey,
+                        imagerySet : bingMapImagerySet
+                    })
+                })
+            ],
+            view : view
+        });
+
+        // VWorld Base Map
+        var vworldBaseMap = new ol.Map({
+            target : 'vworldBaseMap',
+            renderer : 'canvas',
+            layers : [
+                new ol.layer.Tile({
+                    source : new ol.source.XYZ({
+                        attribuions : vworldMapAttr,
+                        url : vworldMapBaseMAPUrl
+                    })
+                })
+            ],
+            view : view
+        });
+
+        // VWorld SateLLite MAP XYZ URL
+        var VWorldSateMap = new ol.Map({
+            target : 'vworldSateMap',
+            renderer : 'canvas',
+            layers : [
+                new ol.layer.Tile({
+                    title : 'VWORLD MAP-STATELLITE',
+                    source : new ol.source.XYZ({
+                        attribuions : vworldMapAttr,
+                        url : vworldMapSateMAPUrl
+                    })
+                })
+            ],
+            view : view
+        });
+    </script>
+
+</body>
+</html>
