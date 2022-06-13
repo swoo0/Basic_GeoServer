@@ -1,0 +1,86 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<title>OpenLayers 3 Examples</title>
+	
+	<!-- jQuery 1.11.3 -->
+	<script type="text/javascript" src="./resources/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap-theme.min.css" type="text/css">
+	<script type="text/javascript" src="./resources/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- OpenLayers 3.14.2 -->
+	<link rel="stylesheet" href="./resources/ol3/v3.14.2/ol.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/v3.14.2/ol-debug.js"></script>
+	
+	<link rel="stylesheet" href="./style.css" type="text/css">
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+					</button>
+					<a class="navbar-brand" href="#">OpenLayers 3</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<form class="navbar-form navbar-right" role="form" action="./index.html">
+						<button type="submit" class="btn btn-success">뒤로 돌아가기</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="content" class="container">
+			<p><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> ol3_801.html - Geolocation</p>
+			<hr/>
+			<div id="map"></div>
+		</div>
+	</div>
+	
+	<hr/>
+	
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted">OSGeo(Open Source GeoSpatial) Korean Chapter</p>
+		</div>
+	</footer>
+	
+	<script type="text/javascript">
+        var map = new ol.Map({
+            target : 'map',
+            renderer : 'canvas',
+            layers : [
+                new ol.layer.Tile({
+                    source : new ol.source.OSM()
+                })
+            ],
+            view : new ol.View({              
+                center : ol.proj.transform([153, 31], 'EPSG:4326', 'EPSG:3857'),
+                zoom : 2
+            })
+        });
+
+        var geolocation = new ol.Geolocation({
+            projection : map.getView().getProjection(),
+            tracking : true
+        });
+
+        geolocation.once('change:position', function() {
+            map.getView().setCenter(geolocation.getPosition());
+            map.getView().setResolution(1);
+        });
+	</script>
+
+</body>
+
+</html>

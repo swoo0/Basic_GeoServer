@@ -1,0 +1,172 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<title>OpenLayers 3 Examples</title>
+	
+	<!-- jQuery 1.11.3 -->
+	<script type="text/javascript" src="./resources/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap-theme.min.css" type="text/css">
+	<script type="text/javascript" src="./resources/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- OpenLayers 3.14.2 -->
+	<link rel="stylesheet" href="./resources/ol3/v3.14.2/ol.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/v3.14.2/ol-debug.js"></script>
+	
+	<!-- Proj4js 2.3.6 -->
+	<script type="text/javascript" src="./resources/proj4js/2.3.6/proj4.js"></script>
+	
+	<link rel="stylesheet" href="./style.css" type="text/css">
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+					</button>
+					<a class="navbar-brand" href="#">OpenLayers 3</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<form class="navbar-form navbar-right" role="form" action="./index.html">
+						<button type="submit" class="btn btn-success">뒤로 돌아가기</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div id="content" class="container">
+			<p><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> ol3_601.html - Interaction</p>
+			<hr/>
+			<div id="toolbox">
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="doubleclickzoom" checked> DoubleClickZoom
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="mousewheelzoom"> MouseWheelZoom
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="dragzoom"> DragZoom
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="dragpan" checked> DragPan
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="dragbox"> DragBox
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="dragrotate"> DragRotate
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="dragrotateandzoom"> DragRotateAndZoom
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="keyboardpan"> KeyboardPan
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="interaction-checkbox" value="keyboardzoom"> KeyboardZoom
+				</label>
+			</div>
+			<hr/>
+			<div id="map"></div>
+			<hr/>
+		</div>
+	</div>
+	
+	<hr/>
+	
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted">OSGeo(Open Source GeoSpatial) Korean Chapter</p>
+		</div>
+	</footer>
+	
+	
+	<script type="text/javascript">
+        var interactions = {
+            doubleclickzoom : new ol.interaction.DoubleClickZoom({
+                duration : 500,
+                delta : 1
+            }),
+            mousewheelzoom : new ol.interaction.MouseWheelZoom({
+                duration : 1000
+            }),
+            dragzoom : new ol.interaction.DragZoom({
+                condition: ol.events.condition.shiftKeysOnly,
+                style : new ol.style.Style({
+                    fill : new ol.style.Fill({
+                        color : 'rgba(255, 255, 0, 0.1)'
+                    }),
+                    stroke : new ol.style.Stroke({
+                        color : '#000',
+                        width : 2
+                    })
+                })
+            }),
+            dragpan : new ol.interaction.DragPan(),
+            dragbox : new ol.interaction.DragBox({
+                condition : ol.events.condition.always,
+                style : new ol.style.Style({
+                    stroke : new ol.style.Stroke({
+                        color : [0, 0, 255, 1]
+                    })
+                })
+            }),
+            dragrotate : new ol.interaction.DragRotate({
+                condition : ol.events.condition.altShiftKeysOnly
+            }),
+            dragrotateandzoom : new ol.interaction.DragRotateAndZoom({
+                condition : ol.events.condition.shiftKeysOnly
+            })
+
+            // select : new ol.interaction.Select(),
+            // draw : new ol.interaction.Draw(),
+            // modify : new ol.interaction.Modify(),
+        };
+
+        var map = new ol.Map({
+            target : 'map',
+            view : new ol.View({
+                center : [14198392.96, 4380554.07],
+                zoom : 6,
+                minZoom : 5,
+                maxZoom : 12
+            }),
+            controls : [
+                new ol.control.Zoom()
+            ],
+            interactions : [
+                interactions.dragpan,
+                interactions.doubleclickzoom
+            ],
+            layers : [
+                new ol.layer.Tile({
+                    source : new ol.source.OSM()
+                })
+            ]
+        });
+
+        $('.interaction-checkbax').on('click', function(e) {
+            var interactionObj = eval("interactions." + $(this).val());
+
+            if ($(this).is(':checked')) {
+                map.addInteraction(interactionObj);
+            } else {
+                map.removeInteraction(interactionObj);
+            }
+        });
+
+	</script>
+
+</body>
+
+</html>

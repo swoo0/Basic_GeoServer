@@ -1,0 +1,137 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<title>OpenLayers 3 Examples</title>
+	
+	<!-- jQuery 1.11.3 -->
+	<script type="text/javascript" src="./resources/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap-theme.min.css" type="text/css">
+	<script type="text/javascript" src="./resources/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- OpenLayers 3.14.2 -->
+	<link rel="stylesheet" href="./resources/ol3/v3.14.2/ol.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/v3.14.2/ol-debug.js"></script>
+	
+	<!-- Proj4js 2.3.6 -->
+	<script type="text/javascript" src="./resources/proj4js/2.3.6/proj4.js"></script>
+	
+	<script type="text/javascript">
+		//Bassel 중부
+		proj4.defs("EPSG:2097", "+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs");
+		
+		//GRS80 중부 (y:500000)
+		proj4.defs("EPSG:5181","+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+		
+		//UTM-K(GRS80) 
+		proj4.defs("EPSG:5179","+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+		
+		//국토지리정보원 표준 - GRS80 중부 (y:600000)
+		proj4.defs("EPSG:5186","+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+	</script>
+	
+	<link rel="stylesheet" href="./style.css" type="text/css">
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+					</button>
+					<a class="navbar-brand" href="#">OpenLayers 3</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<form class="navbar-form navbar-right" role="form" action="./index.html">
+						<button type="submit" class="btn btn-success">뒤로 돌아가기</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div id="content" class="container">
+			<p><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> ol3_701.html - Reprojection with Proj4js</p>
+			<hr/>
+			<div id="toolbox">
+				<select id="srsNames" class="form-control" style="width:250px;">
+					<option selected value="EPSG:4326">EPSG:4326 - WGS84</option>
+					<option value="EPSG:3857">EPSG:3857 - Google Mercator(EPSG:900913)</option>
+					<option value="EPSG:2097">EPSG:2097 - Bassel 중부</option>
+					<option value="EPSG:5181">EPSG:5181 - GRS80 중부(y:500000, 다음지도)</option>
+					<option value="EPSG:5179">EPSG:5179 - UTM-K(GRS80, 네이버지도)</option>
+					<option value="EPSG:5186">EPSG:5186 - GRS80중부(y:600000)</option>
+				</select>
+			</div>
+			<hr/>
+			<div id="map"></div>
+			<hr/>
+			<div class="row" style="margin:0;">
+				<pre id="code-pre"></pre>
+			</div>
+		</div>
+	</div>
+	
+	<hr/>
+	
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted">OSGeo(Open Source GeoSpatial) Korean Chapter</p>
+		</div>
+	</footer>
+	
+	
+	<script type="text/javascript">
+	 
+        var tileLayer = new ol.layer.Tile({
+            source : new ol.source.XYZ({
+                attibuteions : new ol.Attribution({
+                    html : 'Data by <a href="http://map.vworld.kr">VWORLD</a>'
+                }),
+				url : 'http://xdworld.vworld.kr:8080/2d/gray/201512/{z}/{x}/{y}.png'
+            })
+        });
+
+        var mousePosition = new ol.control.MousePosition({
+            coordinateFormat : ol.coordinate.createStringXY(4),
+            projection : 'EPSG:4326',
+            className : '',
+            target : document.getElementById("code-pre"),
+            undefinedHTML : 'Please on the canvas.'
+        });
+
+        var map = new ol.Map({
+            target : 'map',
+            view : new ol.View({
+                center : [14168463.109225627, 4369274.301580174],
+                zoom : 12,
+                minZoom : 10,
+                maxZoom : 18
+            }),
+            controls : [ new ol.control.Zoom(), mousePosition ],
+            interactions : [
+                new ol.interaction.DragPan(),
+                new ol.interaction.DoubleClickZoom()
+            ],
+            layers : [
+                tileLayer
+            ]
+        });
+
+        $('#srsNames').on('change', function(e) {
+            mousePosition.setProjection(ol.proj.get($(this).val()));
+        })
+
+	</script>
+	
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<title>OpenLayers 3 Examples</title>
+	
+	<!-- jQuery 1.11.3 -->
+	<script type="text/javascript" src="./resources/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap-theme.min.css" type="text/css">
+	<script type="text/javascript" src="./resources/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- OpenLayers 3.14.2 -->
+	<link rel="stylesheet" href="./resources/ol3/v3.14.2/ol.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/v3.14.2/ol-debug.js"></script>
+	
+	<!-- Proj4js 2.3.6 -->
+	<script type="text/javascript" src="./resources/proj4js/2.3.6/proj4.js"></script>
+	
+	<link rel="stylesheet" href="./style.css" type="text/css">
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+					</button>
+					<a class="navbar-brand" href="#">OpenLayers 3</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<form class="navbar-form navbar-right" role="form" action="./index.html">
+						<button type="submit" class="btn btn-success">뒤로 돌아가기</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div id="content" class="container">
+			<p><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> ol3_501.html - Control</p>
+			<hr/>
+			<div id="toolbox">
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="attribution"> Attribution
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="fullscreen"> FullScreen
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="mouseposition"> MousePosition
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="overviewmap"> OverviewMap
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="rotate"> Rotate
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="scaleline"> ScaleLine
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="zoom"> Zoom
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="zoomslider"> ZoomSlider
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" class="control-checkbox" value="zoomextent"> ZoomExtent
+				</label>
+			</div>
+			<hr/>
+			<div id="map"></div>
+			<hr/>
+			<div class="row" style="margin:0;">
+				<pre class="code-pre">
+				</pre>
+			</div>
+		</div>
+	</div>
+	
+	<hr/>
+	
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted">OSGeo(Open Source GeoSpatial) Korean Chapter</p>
+		</div>
+	</footer>
+	
+	
+	<script type="text/javascript">
+        var controls = {
+            attribution : new ol.control.Attribution({
+                name : 'abc',
+                collapsible : true,     // 버튼 유무
+                collapsed : false,
+                // tipLable : 'Attributions',
+                // lable : 'i',
+                // collapseLable : '>>'
+            }),
+            fullscreen : new ol.control.FullScreen({
+                label : '\u2194',
+                labelActive : '\u00d7',
+                tipLabel : 'Toggle full-screen'
+            }),
+            mouseposition : new ol.control.MousePosition({
+                coordinateFormat : function(coord) {
+                    return ol.coordinate.toStringXY(coord, 5);
+                    // return ol.coordinate.toStringHDMS(coord);
+                    // return ol.coordinate.format(coord, '위치는 (x) | {y}', 5);
+                },
+                projection : 'EPSG:4326'
+            }),
+            overviewmap : new ol.control.OverviewMap({
+                collapsed : false,
+                collapsible : true,
+                layers : [
+                    new ol.layer.Tile({
+                        source : new ol.source.Stamen({
+                            layer : 'watercolor'
+                        })
+                    })
+                ]
+            }),
+            rotate : new ol.control.Rotate({
+                autoHide : false,
+                duration : 1000
+            }),
+            scaleline : new ol.control.ScaleLine({
+                minWidth : 100,
+                units : 'degrees' // 'degrees', 'imperial', 'nautical', 'metric', 'us'
+            }),
+            zoom : new ol.control.Zoom({
+                duration : 100,
+                delta : 1
+                // zoomInLabel : '',
+                // zoomOutLabel : '',
+                // zoomIntTipLabel : '',
+                // zoomOutTipLabel: '',
+            }),
+            zoomslider : new ol.control.ZoomSlider(),
+            zoomextent : new ol.control.ZoomToExtent({
+                // map.getView().fitExtent(
+                // map.getView().calculateExtent(map.getSize()),
+                // map.getSize()
+                // )
+				extent : [813079.77, 5929220.28, 848966.96, 5936863.98]
+            })
+        };
+
+        var map = new ol.Map({
+            target : 'map',
+            view : new ol.View({
+				center: [14198392.96, 4380554.07],
+                zoom : 6,
+                minZoom : 5,
+                maxZoom : 12
+            }),
+            controls : [],
+            interactions : [
+                new ol.interaction.DragPan(),
+                new ol.interaction.DoubleClickZoom()
+            ],
+            layers : [
+                new ol.layer.Tile({
+                    source : new ol.source.OSM()
+                })
+            ]
+        });
+
+		$('.control-checkbox').on('click', function(e) {
+			var controlObj = eval("controls." + $(this).val());
+			
+			if ($(this).is(':checked')) {
+				map.addControl(controlObj);
+				$('.code-pre').html('Add ' + $(this).val() + ' Control');
+
+			} else {
+				map.removeControl(controlObj);
+			}
+		});
+    </script>
+
+</body>
+
+</html>

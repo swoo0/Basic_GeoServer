@@ -1,0 +1,189 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<title>OpenLayers 3 Examples</title>
+	
+	<!-- jQuery 1.11.3 -->
+	<script type="text/javascript" src="./resources/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="./resources/bootstrap/3.3.6/css/bootstrap-theme.min.css" type="text/css">
+	<script type="text/javascript" src="./resources/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- OpenLayers 3.14.2 -->
+	<link rel="stylesheet" href="./resources/ol3/v3.14.2/ol.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/v3.14.2/ol-debug.js"></script>
+	
+	<!-- Proj4js 2.3.6 -->
+	<script type="text/javascript" src="./resources/proj4js/2.3.6/proj4.js"></script>
+	
+	<!-- Layer Switcher (walkermatt) -->
+	<link rel="stylesheet" href="./resources/ol3/walkermatt/ol3-layerswitcher.css" type="text/css">
+	<script type="text/javascript" src="./resources/ol3/walkermatt/ol3-layerswitcher.js"></script>
+	
+	<link rel="stylesheet" href="./style.css" type="text/css">
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+					</button>
+					<a class="navbar-brand" href="#">OpenLayers 3</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<form class="navbar-form navbar-right" role="form" action="./index.html">
+						<button type="submit" class="btn btn-success">뒤로 돌아가기</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div id="content" class="container">
+			<p><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> ol3_602.html - Draw Modify Feature</p>
+			<hr/>
+			<div id="toolbox">
+				<div class="btn-group" data-toggle="buttons">
+					<label class="btn btn-default active">
+						<input type="radio" name="editor-options" value="select">Select
+					</label>
+					<label class="btn btn-default">
+						<input type="radio" name="editor-options" value="point">POINT
+					</label>
+					<label class="btn btn-default">
+						<input type="radio" name="editor-options" value="line">LINE
+					</label>
+					<label class="btn btn-default">
+						<input type="radio" name="editor-options" value="polygon">Polygon
+					</label>
+					<label class="btn btn-default">
+						<input type="radio" name="editor-options" value="modify">Modify
+					</label>
+				</div>
+			</div>
+			<hr/>
+			<div id="map"></div>
+		</div>
+	</div>
+	
+	<hr/>
+	
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted">OSGeo(Open Source GeoSpatial) Korean Chapter</p>
+		</div>
+	</footer>
+	
+	
+	<script type="text/javascript">
+        
+        var features = new ol.Collection();
+
+        var featureOverlay = new ol.layer.Vector({
+            source : new ol.source.Vector({features : features}),
+            style : new ol.style.Style({
+                fill : new ol.style.Fill({
+                    color : 'rgba(255, 255, 255, 0.5)'
+                }),
+                stroke : new ol.style.Stroke({
+                    color : 'rgba(55, 155, 55, 0.8)',
+                    width : 5
+                }),
+                image : new ol.style.Circle({
+                    radius : 10,
+                    fill : new ol.style.Fill({
+                        color: '#ffcc33'
+                    })
+                })
+            })
+        });
+
+        var editInteractions = {
+            select : new ol.interaction.Select({
+                condition : ol.events.condition.click
+                // condition : ol. events.condition.pointeMove
+            }),
+            point : new ol.interaction.Draw({
+                type : 'Point',
+                snapTolerance : 12,
+                minPointsPerRing : 3,
+                features : features
+            }),
+            line : new ol.interaction.Draw({
+                type : 'LineString',
+                features : features
+            }),
+            polygon : new ol.interaction.Draw({
+                type : 'Polygon',
+                features : features
+            }),
+            modify : new ol.interaction.Modify({
+                deleteCondition : ol.events.condition.singleClick,  // shiftKey + Click
+                features : features
+            })
+        };
+
+        var map = new ol.Map({
+            target : 'map',
+            view : new ol.View({
+                center : ol.proj.transform([ 131.86656, 37.24125 ], 'EPSG:4326', 'EPSG:3857'),
+                zoom : 16,
+                minZoom : 10,
+                maxZoom : 18
+            }),
+            controls : [ new ol.control.Zoom(), new ol.control.LayerSwitcher()],
+            interactions : [
+                new ol.interaction.DragPan(),
+                new ol.interaction.DoubleClickZoom()
+            ],
+            layers : [
+                new ol.layer.Tile({
+                    type : 'base',
+                    title : 'VWORLD Satellite',
+                    source : new ol.source.XYZ({
+                        attributions : new ol.Attribution({
+                            html : 'Data by <a href="http://map.vworld.kr">VWORLD</a>'
+                        }),
+						url : 'http://xdworld.vworld.kr:8080/2d/Satellite/201301/{z}/{x}/{y}.jpeg'
+                    })
+                }),
+                new ol.layer.Tile({
+                    type : 'base',
+                    title : 'VWORLD Road',
+                    source : new ol.source.XYZ({
+                        attributions : new ol.Attribution({
+                            html : 'Data by <a href="http://map.vworld.kr">VWORLD</a>'
+                        }),
+						url : 'http://xdworld.vworld.kr:8080/2d/Base/201512/{z}/{x}/{y}.png'
+                    })
+                })
+            ]
+        });
+
+        featureOverlay.setMap(map);
+
+        var activeInteraction;
+        $('input[name=editor-options]').on('change', function(e) {
+            
+            if (activeInteraction != null || activeInteraction == undefined) {
+                map.removeInteraction(activeInteraction);
+            }
+
+            activeInteraction = eval("editInteractions." + $(this).val());
+
+            map.addInteraction(activeInteraction);
+        });
+	</script>
+
+</body>
+
+</html>
